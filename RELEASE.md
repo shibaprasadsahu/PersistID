@@ -22,14 +22,14 @@ Verify the build is stable:
 
 Update the version number in `persistid/build.gradle.kts`:
 ```kotlin
-version = "0.1-alpha01"  // Update to target version
+version = "0.1-alpha02"  // Update to target version
 ```
 
 ### 3. Commit Changes
 
 ```bash
 git add .
-git commit -m "Prepare for release v0.1-alpha01"
+git commit -m "Prepare for release v0.1-alpha02"
 git push origin main
 ```
 
@@ -37,10 +37,10 @@ git push origin main
 
 ```bash
 # Create annotated tag (without 'v' prefix)
-git tag -a 0.1-alpha01 -m "Release 0.1-alpha01"
+git tag -a 0.1-alpha02 -m "Release 0.1-alpha02"
 
 # Publish tag to remote
-git push origin 0.1-alpha01
+git push origin 0.1-alpha02
 ```
 
 ### 5. Automated Release Workflow
@@ -68,7 +68,7 @@ Upon tag publication, GitHub Actions automatically executes:
 3. **Installation Testing**
    ```kotlin
    dependencies {
-       implementation("com.github.shibaprasadsahu:PersistID:0.1-alpha01")
+       implementation("com.github.shibaprasadsahu:PersistID:0.1-alpha02")
    }
    ```
 
@@ -78,7 +78,7 @@ The project follows semantic versioning with pre-release identifiers:
 
 ### Alpha Releases (Current Phase)
 ```
-0.1-alpha01
+0.1-alpha02
 0.1-alpha02
 0.2-alpha01
 ```
@@ -117,10 +117,10 @@ To remove a published release:
 
 ```bash
 # Remove local tag
-git tag -d 0.1-alpha01
+git tag -d 0.1-alpha02
 
 # Remove remote tag
-git push --delete origin 0.1-alpha01
+git push --delete origin 0.1-alpha02
 ```
 
 Subsequently, manually delete the release from the GitHub Releases page.

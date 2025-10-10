@@ -82,7 +82,7 @@ afterEvaluate {
 
                 groupId = "com.github.shibaprasadsahu"
                 artifactId = "persistid"
-                version = "0.1-alpha01"
+                version = "0.1-alpha02"
 
                 pom {
                     name.set("PersistId")

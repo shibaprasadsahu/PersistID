@@ -6,7 +6,7 @@
 
 A modern, lightweight Android library for generating and persisting unique device identifiers with cloud backup.
 
-> **⚠️ EARLY ALPHA**: This library is in early alpha stage (0.1-alpha01). The API is experimental and may change in future releases. Use with caution and thorough testing before deploying to production.
+> **⚠️ EARLY ALPHA**: This library is in early alpha stage (0.1-alpha02). The API is experimental and may change in future releases. Use with caution and thorough testing before deploying to production.
 
 ## Features
 
@@ -43,11 +43,11 @@ dependencyResolutionManagement {
 Add PersistID to your app's `build.gradle.kts`:
 ```kotlin
 dependencies {
-    implementation("com.github.shibaprasadsahu:PersistID:0.1-alpha01")
+    implementation("com.github.shibaprasadsahu:PersistID:0.1-alpha02")
 }
 ```
 
-> **Note**: Replace `0.1-alpha01` with the latest version from [releases](https://github.com/shibaprasadsahu/PersistID/releases).
+> **Note**: Replace `0.1-alpha02` with the latest version from [releases](https://github.com/shibaprasadsahu/PersistID/releases).
 
 **Note**: Experimental API requires opt-in:
 ```kotlin

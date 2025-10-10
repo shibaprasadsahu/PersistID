@@ -159,7 +159,7 @@ on:
 
 **Triggers:**
 - Git tags starting with version numbers
-- Examples: `0.1-alpha01`, `1.0`, `2.5-beta03`
+- Examples: `0.1-alpha02`, `1.0`, `2.5-beta03`
 
 **Does not execute on:**
 - Regular commits to main branch
@@ -195,8 +195,8 @@ The release workflow contains **1 job** with multiple steps:
 
 **4. Version Extraction**
 ```bash
-- Parse tag: 0.1-alpha01
-- Extract version: 0.1-alpha01
+- Parse tag: 0.1-alpha02
+- Extract version: 0.1-alpha02
 - Apply to release name
 ```
 
@@ -229,7 +229,7 @@ Generates markdown document containing:
 ### Visual Flow Diagram
 
 ```
-Push tag 0.1-alpha01
+Push tag 0.1-alpha02
         ↓
     Checkout code
         ↓
@@ -243,7 +243,7 @@ Push tag 0.1-alpha01
         ↓
   Build release AAR
         ↓
-Extract version (0.1-alpha01)
+Extract version (0.1-alpha02)
         ↓
 Generate release notes
         ↓
@@ -293,7 +293,7 @@ prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') ||
 **Examples:**
 | Tag | Type |
 |-----|------|
-| 0.1-alpha01 | Pre-release |
+| 0.1-alpha02 | Pre-release |
 | 0.9-beta02 | Pre-release |
 | 1.0-rc01 | Pre-release |
 | 1.0 | Stable |
@@ -322,8 +322,8 @@ git push origin feature/new-feature
 
 ```bash
 # Only triggered by pushing a tag (without 'v' prefix)
-git tag -a 0.1-alpha01 -m "Release 0.1-alpha01"
-git push origin 0.1-alpha01
+git tag -a 0.1-alpha02 -m "Release 0.1-alpha02"
+git push origin 0.1-alpha02
 ```
 
 ---
@@ -420,8 +420,8 @@ Both workflows create downloadable artifacts:
 **Tests Failed:**
 - Run tests locally first: `./gradlew test`
 - Fix any failing tests
-- Delete tag: `git tag -d 0.1-alpha01`
-- Delete remote tag: `git push --delete origin 0.1-alpha01`
+- Delete tag: `git tag -d 0.1-alpha02`
+- Delete remote tag: `git push --delete origin 0.1-alpha02`
 - Push new tag after fixing
 
 **Build Failed:**
