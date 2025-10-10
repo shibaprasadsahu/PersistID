@@ -1,0 +1,95 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: Build release AAR
+        run: ./gradlew :persistid:assembleRelease
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          cat > release_notes.md << 'EOF'
+          ## PersistID ${{ steps.version.outputs.VERSION }}
+
+          ### 🚀 Installation
+
+          Add to your `build.gradle.kts`:
+          ```kotlin
+          dependencies {
+              implementation("com.github.shibaprasadsahu:PersistID:${{ steps.version.outputs.VERSION }}")
+          }
+          ```
+
+          Add JitPack repository in `settings.gradle.kts`:
+          ```kotlin
+          maven { url = uri("https://jitpack.io") }
+          ```
+
+          ### ⚠️ Experimental API
+
+          This library uses experimental APIs. Add opt-in annotation:
+          ```kotlin
+          @OptIn(ExperimentalPersistIdApi::class)
+          ```
+
+          ### 📚 Documentation
+
+          - [README](https://github.com/shibaprasadsahu/PersistID#readme)
+          - [Architecture Guide](https://github.com/shibaprasadsahu/PersistID/blob/main/AGENTS.md)
+
+          ### 🔗 Links
+
+          - [JitPack Build Status](https://jitpack.io/#shibaprasadsahu/PersistID/${{ steps.version.outputs.VERSION }})
+          - [Sample App](https://github.com/shibaprasadsahu/PersistID/tree/main/app)
+
+          ---
+
+          **Note**: This is an early alpha release. The API is experimental and may change in future releases. Use with caution and thorough testing.
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            persistid/build/outputs/aar/persistid-release.aar
+          body_path: release_notes.md
+          draft: false
+          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify JitPack
+        run: |
+          curl -X POST "https://jitpack.io/api/builds/com.github.shibaprasadsahu/PersistID/${{ steps.version.outputs.VERSION }}"
