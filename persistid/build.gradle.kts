@@ -1,21 +1,88 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
+    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     id("maven-publish")
+}
+
+kotlin {
+    // Android target
+    androidTarget {
+        compilations.all {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    jvmTarget.set(JvmTarget.JVM_17)
+                }
+            }
+        }
+        publishLibraryVariants("release")
+    }
+
+    // iOS targets
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "PersistId"
+            isStatic = true
+        }
+    }
+
+    sourceSets {
+        // Common source set
+        commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
+        }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+
+        // Android source set
+        androidMain.dependencies {
+            implementation(libs.androidx.lifecycle.runtime.ktx)
+            implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.kotlinx.coroutines.play.services)
+            implementation(libs.androidx.datastore.preferences)
+            implementation(libs.androidx.work.runtime.ktx)
+            implementation(libs.play.services.auth.blockstore)
+            implementation(libs.core.ktx)
+
+            // KVault for secure storage
+            implementation(libs.kvault)
+        }
+
+        // iOS source set
+        iosMain.dependencies {
+            // KVault for secure storage (Keychain on iOS)
+            implementation(libs.kvault)
+        }
+
+        // Android test
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(libs.junit)
+                implementation(libs.kotlin.test)
+                implementation(libs.truth)
+                implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.turbine)
+                implementation(libs.mockk)
+                implementation(libs.robolectric)
+                implementation(libs.androidx.core.ktx)
+            }
+        }
+    }
 }
 
 android {
     namespace = "com.shibaprasadsahu.persistid"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 21
-
-
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -36,42 +103,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
-    }
 }
-
-dependencies {
-    // Lifecycle for lifecycle-aware callbacks
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-
-    // Coroutines
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.play.services)
-
-    // DataStore Preferences (async storage)
-    implementation(libs.androidx.datastore.preferences)
-
-    // WorkManager for background backup sync
-    implementation(libs.androidx.work.runtime.ktx)
-
-    // BlockStore (for cloud backup)
-    implementation(libs.play.services.auth.blockstore)
-    implementation(libs.core.ktx)
-
-    // Testing
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlin.test)
-    testImplementation(libs.truth)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.turbine)
-    testImplementation(libs.mockk)
-    testImplementation(libs.robolectric)
-    testImplementation(libs.androidx.core.ktx)
-}
-
 
 // Maven Publishing for JitPack
 afterEvaluate {
@@ -82,11 +114,11 @@ afterEvaluate {
 
                 groupId = "com.github.shibaprasadsahu"
                 artifactId = "persistid"
-                version = "0.1-alpha02"
+                version = "0.2-alpha01"
 
                 pom {
                     name.set("PersistId")
-                    description.set("Modern Android library for persistent device identifiers with cloud backup")
+                    description.set("Modern Kotlin Multiplatform library for persistent device identifiers (Android + iOS)")
                     url.set("https://github.com/shibaprasadsahu/PersistID")
 
                     licenses {
